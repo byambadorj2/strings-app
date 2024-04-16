@@ -1,25 +1,72 @@
 import { Client } from "pg";
 import { loadEnvConfig } from "@next/env";
+import { faker } from "@faker-js/faker";
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
 async function loadFakeData(numUsers: number = 10) {
-  console.log(`executing load fake data. generating ${numUsers} users`);
+  console.log(`Executing load fake data. Generating ${numUsers} users`);
 
   const client = new Client({
     user: process.env.POSTGRES_USER,
     host: process.env.POSTGRES_HOST,
     database: process.env.POSTGRES_NAME,
     password: process.env.POSTGRES_PASS,
-    port: parseInt(process.env.POSTGRES_PORT!),
+    port: parseInt(process.env.POSTGRES_PORT || "5432"),
   });
 
   await client.connect();
 
-  const res = await client.query("select 1");
-  console.log(res);
-  await client.end();
-}
+  try {
+    await client.query("BEGIN");
+    for (let i = 0; i < numUsers; i++) {
+      const insertQuery =
+        "INSERT INTO public.users(username, password, avatar) VALUES ($1, $2, $3)";
+      const values = [
+        faker.internet.userName(),
+        faker.internet.password(),
+        faker.image.avatar(),
+      ];
+      await client.query(insertQuery, values);
+    }
 
-loadFakeData();
+    const res = await client.query(
+      "select id from public.users order by created_at desc limit $1",
+      [numUsers]
+    );
+    console.log(res.rows);
+
+    for (const row of res.rows) {
+      for (let i = 0; i < Math.ceil(Math.random() * 10); i++) {
+        await client.query(
+          "insert into public.posts (user_id, content) values ($1, $2)",
+          [row.id, faker.lorem.sentence()]
+        );
+      }
+    }
+
+    for (const row1 of res.rows) {
+      for (const row2 of res.rows) {
+        if (row1.id != row2.id && Math.random() > 0.5) {
+          await client.query(
+            "insert into public.follows (user_id, follower_id) values ($1, $2)",
+            [row1.id, row2.id]
+          );
+        }
+      }
+    }
+
+    await client.query("COMMIT");
+  } catch (error) {
+    console.error("Error during transaction, rolling back!", error);
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    await client.end();
+    console.log("Database connection closed.");
+  }
+}
+const numUsers = parseInt(process.argv[2]) || 10;
+console.log(`loading ${numUsers} fake users.`);
+loadFakeData(numUsers);

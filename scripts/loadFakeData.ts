@@ -1,12 +1,8 @@
 import { Client } from "pg";
-import { loadEnvConfig } from "@next/env";
 import { faker } from "@faker-js/faker";
-import bcrypt, { hash } from "bcrypt";
+import { hash } from "bcrypt";
 
-const projectDir = process.cwd();
-loadEnvConfig(projectDir);
-
-async function loadFakeData(numUsers: number = 10) {
+export async function loadFakeData(numUsers: number = 10) {
   console.log(`Executing load fake data. Generating ${numUsers} users`);
 
   const client = new Client({
@@ -23,10 +19,14 @@ async function loadFakeData(numUsers: number = 10) {
     await client.query("BEGIN");
     for (let i = 0; i < numUsers; i++) {
       const saltRounds = 10;
-      const hash = await bcrypt.hash("strings123", saltRounds);
+      const a = await hash.bcrypt();
       const insertQuery =
         "INSERT INTO public.users(username, password, avatar) VALUES ($1, $2, $3)";
-      const values = [faker.internet.userName(), hash, faker.image.avatar()];
+      const values = [
+        faker.internet.userName(),
+        faker.internet.password(),
+        faker.image.avatar(),
+      ];
       await client.query(insertQuery, values);
     }
 
@@ -66,6 +66,3 @@ async function loadFakeData(numUsers: number = 10) {
     console.log("Database connection closed.");
   }
 }
-const numUsers = parseInt(process.argv[2]) || 10;
-console.log(`loading ${numUsers} fake users.`);
-loadFakeData(numUsers);

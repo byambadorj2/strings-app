@@ -14,10 +14,10 @@ async function loadFakeData(numUsers: number = 10) {
     for (let i = 0; i < numUsers; i++) {
       const saltRounds = 10;
       const hash = await bcrypt.hash("strings123", saltRounds);
-      const insertQuery =
-        "INSERT INTO public.users(username, password, avatar) VALUES ($1, $2, $3)";
-      const values = [faker.internet.userName(), hash, faker.image.avatar()];
-      await client.query(insertQuery, values);
+      await client.query(
+        "INSERT INTO public.users(username, password, avatar) VALUES ($1, $2, $3)",
+        [faker.internet.userName(), hash, faker.image.avatar()]
+      );
     }
 
     const res = await client.query(

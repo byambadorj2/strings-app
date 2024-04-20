@@ -1,10 +1,8 @@
 import { sql } from "@/db";
-import { tr } from "@faker-js/faker";
 import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
 
 import { NextResponse } from "next/server";
-import { use } from "react";
 
 export async function POST(request: Request) {
   const json = await request.json();

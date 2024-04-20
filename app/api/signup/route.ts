@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     [json.username]
   );
 
-  if (res.rowCount > 0) {
+  if (res.rowCount! > 0) {
     return NextResponse.json({ error: "user already exists" }, { status: 400 });
   }
   const saltRounds = 10;

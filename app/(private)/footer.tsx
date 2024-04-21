@@ -1,3 +1,3 @@
 export default function Footer() {
-  return <footer>Footer</footer>;
+  return <footer>&copy; Strings {new Date().getFullYear()}</footer>;
 }

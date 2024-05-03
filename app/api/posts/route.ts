@@ -1,7 +1,6 @@
 import { getJWTPayload } from "@/app/util/auth";
 import { sql } from "@/db";
 import { NextResponse } from "next/server";
-import { off } from "process";
 
 export async function GET(request: Request) {
   const jwtPayload = await getJWTPayload();
@@ -9,8 +8,8 @@ export async function GET(request: Request) {
   const username = searchParams.get("username");
   const page =
     (searchParams.get("page") && parseInt(searchParams.get("page")!)) || 0;
-  const limit = 10;
-  const offset = page * 10;
+  const limit = 3;
+  const offset = page * 3;
   const statement = `select p. *, u.avatar, u.username 
     form posts p inner join users u
     on p.user_id = u.id where user_id = $1

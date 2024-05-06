@@ -1,5 +1,4 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useState } from "react";
 
@@ -10,8 +9,8 @@ function Form() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const res = await fetch("api/login", {
-      method: "post",
+    const res = await fetch("/api/login", {
+      method: "POST",
       body: JSON.stringify({ username, password }),
     });
     if (res.ok) {
@@ -24,7 +23,7 @@ function Form() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-2 p-5 max-w-xs w-full bg-stone-800 rounded-lg"
+      className="flex flex-col gap-2 p-5 max-w-xs w-full dark:bg-slate-800 bg-slate-300 rounded-lg"
     >
       <div className="text-center">
         <h3 className="font-semibold">Sign In</h3>
@@ -36,7 +35,7 @@ function Form() {
         <div className="flex flex-col gap-2">
           <label>Username</label>
           <input
-            className="text-black p-3 border border-state-700 rounded-lg"
+            className="text-black p-3 border border-slate-700 rounded-lg"
             type="text"
             onChange={(e) => setUsername(e.target.value)}
             value={username}
@@ -49,8 +48,8 @@ function Form() {
       <div className="flex flex-col gap-2">
         <label>Password</label>
         <input
-          className="text-black p-3 border border-state-700 rounded-lg"
-          type="text"
+          className="text-black p-3 border border-slate-700 rounded-lg"
+          type="password"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
           id="password"
@@ -67,4 +66,5 @@ function Form() {
     </form>
   );
 }
+
 export default Form;

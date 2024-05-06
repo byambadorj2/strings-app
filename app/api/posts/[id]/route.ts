@@ -1,6 +1,5 @@
 import { getJWTPayload } from "@/app/util/auth";
 import { sql } from "@/db";
-import { error } from "console";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -8,8 +7,8 @@ export async function GET(
   { params }: { params: { id: number } }
 ) {
   const jwtPayload = await getJWTPayload();
-  const res = await sql("select * from posts where id = $1", [
-    params,
+  const res = await sql("select * from posts where id = $1 and user_id = $2", [
+    params.id,
     jwtPayload.sub,
   ]);
   if (res.rowCount == 0) {
@@ -24,7 +23,7 @@ export async function PATCH(
 ) {
   const body = await request.json();
   const jwtPayload = await getJWTPayload();
-  const res = await sql("select * from posts where user_id = $1", [
+  const res = await sql("select * from posts where user_id = $1 and id = $2", [
     jwtPayload.sub,
     params.id,
   ]);

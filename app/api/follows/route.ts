@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     [json.user_id, jwtPayload.sub]
   );
 
-  if (res.rowCount > 0) {
+  if (res.rowCount !== null && res.rowCount !== undefined && res.rowCount > 0) {
     return NextResponse.json({ error: "already following" }, { status: 409 });
   }
 

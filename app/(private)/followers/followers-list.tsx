@@ -6,7 +6,9 @@ function FollowersList({ index }: { index: number }) {
   const { data: followerData } = useSWR(
     () => "/api/users/" + userData.data.id + "/followers?page=" + index
   );
-  if (!followerData) return <div>loading....</div>;
+
+  if (!followerData) return <div>loading...</div>;
+
   return (
     <ul>
       {followerData.data.map((user: UserI) => {

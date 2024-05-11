@@ -4,16 +4,18 @@ import FollowingList from "./following-list";
 function FollowingContainer() {
   const [cnt, setCnt] = useState(1);
 
-  const page = [];
+  const pages = [];
   for (let i = 0; i < cnt; i++) {
-    page.push(<FollowingList index={i} />);
+    pages.push(<FollowingList index={i} key={i} />);
   }
+
   return (
     <div>
+      {pages}
       <div className="flex justify-center w-full">
         <button
-          className="bg-slate-900 p-2 my-3"
           onClick={() => setCnt(cnt + 1)}
+          className="dark:bg-slate-900 bg-slate-400 p-2 rounded-lg"
         >
           Load More
         </button>
@@ -21,4 +23,5 @@ function FollowingContainer() {
     </div>
   );
 }
+
 export default FollowingContainer;

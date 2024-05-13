@@ -4,6 +4,7 @@ import Post from "./post";
 function PostList({
   index,
   username,
+  showEditBtn,
 }: {
   index: number;
   username: string;
@@ -21,7 +22,7 @@ function PostList({
       {data.data.map((post: PostI) => {
         return (
           <li className="my-5" key={post.id}>
-            <Post post={post} />
+            <Post post={post} showEditBtn={showEditBtn} />
           </li>
         );
       })}
